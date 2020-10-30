@@ -8,10 +8,10 @@ author: <br><br>
 output: 
   revealjs::revealjs_presentation:
     self_contained: false
-    reveal_plugins: ["zoom", "notes", "chalkboard", "menu"]
+    reveal_plugins: ["notes", "chalkboard", "menu"]
     reveal_options:
       chalkboard: 
-        theme: chalkboard
+        theme: zenburn
         toggleNotesButton: true
       menu:
         numbers: true
@@ -48,3 +48,7 @@ summary(cars)
 ```{r pressure}
 plot(pressure)
 ```
+
+## MathJax
+
+$$(X'X)^{-1} X'y$$
