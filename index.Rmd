@@ -8,6 +8,7 @@ author: <br><br>
 output: 
   revealjs::revealjs_presentation:
     self_contained: false
+    keep_md: true
     reveal_plugins: ["notes", "chalkboard", "menu"]
     reveal_options:
       chalkboard: 
@@ -18,6 +19,9 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+library(rgl)
+library(predict3d)
+library(MASS)
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
@@ -52,3 +56,62 @@ plot(pressure)
 ## MathJax
 
 $$(X'X)^{-1} X'y$$
+
+##
+
+<center>
+```{r out.width = "150%"}
+set.seed(12)
+# Create variables with zero correlation
+out <- mvrnorm(1000, mu = c(-10,10), Sigma = matrix(c(10,0,0,10), ncol = 2),
+               empirical = T)
+
+# Create error term for our regression equation
+set.seed(87)
+epsilon <- rnorm(1000, mean = 0, sd = 3)
+
+# Create 2 x-vars
+x1 <- out[,1]
+x2 <- out[,2]
+
+# Set up our regression model
+# x1 causes x3 and y 
+y <- 1 + 0.7*x1 + 0.6* x2 + epsilon
+df <- data.frame(y, x1, x2)
+
+fit <- lm(y ~ x1 + x2, data = df)
+
+
+beta_0 <- coef(summary(fit))[1]
+beta_1 <- coef(summary(fit))[2]
+beta_2 <- coef(summary(fit))[3]
+
+x1_val <-  -10
+my_res <- vapply(c(5, 6, 15, 16), function(x)beta_0 + beta_1 * x1_val + beta_2 * x , numeric(1))
+
+x1_val <-  -5
+my_res2 <- vapply(c(5, 6, 15, 16), function(x)beta_0 + beta_1 * x1_val + beta_2 * x , numeric(1))
+
+
+clear3d()
+
+# First plot
+plotids <- plot3d(fit, size = 5)
+lines3d(x = c(-10,-10), y = c(0, 20), z = c(-13, -13), lwd = 4, col = 'red')
+lines3d(x = c(-10,-10), y = c(5, 5), z = c(-13, my_res[1]), lwd = 4, col = 'red')
+lines3d(x = c(-10,-10), y = c(6, 6), z = c(-13, my_res[2]), lwd = 4, col = 'red')
+lines3d(x = c(-10,-10), y = c(15, 15), z = c(-13, my_res[3]), lwd = 4, col = 'red')
+lines3d(x = c(-10,-10), y = c(16, 16), z = c(-13, my_res[4]), lwd = 4, col = 'red')
+lines3d(x = c(-10,-10), y = c(5, 6), z = c(my_res[1], my_res[2]), lwd = 4, col = 'red')
+lines3d(x = c(-10,-10), y = c(15, 16), z = c(my_res[3], my_res[4]), lwd = 4, col = 'red')
+lines3d(x = c(-5,-5), y = c(0, 20), z = c(-13, -13), lwd = 4, col = 'red')
+lines3d(x = c(-5,-5), y = c(5, 5), z = c(-13, my_res2[1]), lwd = 4, col = 'red')
+lines3d(x = c(-5,-5), y = c(6, 6), z = c(-13, my_res2[2]), lwd = 4, col = 'red')
+lines3d(x = c(-5,-5), y = c(15, 15), z = c(-13, my_res2[3]), lwd = 4, col = 'red')
+lines3d(x = c(-5,-5), y = c(16, 16), z = c(-13, my_res2[4]), lwd = 4, col = 'red')
+lines3d(x = c(-5,-5), y = c(5, 6), z = c(my_res2[1], my_res2[2]), lwd = 4, col = 'red')
+lines3d(x = c(-5,-5), y = c(15, 16), z = c(my_res2[3], my_res2[4]), lwd = 4, col = 'red')
+
+rglwidget(elementId = "plot3drgl3")
+```
+</center>
