@@ -23,6 +23,7 @@ library(rgl)
 library(predict3d)
 library(MASS)
 knitr::opts_chunk$set(echo = FALSE)
+knitr::knit_hooks$set(webgl = hook_webgl)
 ```
 
 ## R Markdown
@@ -115,3 +116,17 @@ lines3d(x = c(-5,-5), y = c(15, 16), z = c(my_res2[3], my_res2[4]), lwd = 4, col
 rglwidget(elementId = "plot3drgl3")
 ```
 </center>
+
+
+## 
+
+
+See if it works for this 3D plot after we enable the hook
+via the chunk option `webgl = TRUE`:
+
+```{r, test-rgl, webgl=TRUE}
+x <- sort(rnorm(1000))
+y <- rnorm(1000)
+z <- rnorm(1000) + atan2(x,y)
+plot3d(x, y, z, col = rainbow(1000))
+```
